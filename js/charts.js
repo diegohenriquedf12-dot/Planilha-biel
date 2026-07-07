@@ -31,7 +31,8 @@
   Charts.donut = function (host, data, opts = {}) {
     host.innerHTML = '';
     const size = opts.size || 220, r = size / 2, inner = opts.inner != null ? opts.inner : r * 0.62;
-    const total = U.sum(data, (d) => d.value) || 1;
+    const realTotal = U.sum(data, (d) => d.value); // valor exibido (pode ser 0)
+    const total = realTotal || 1;                  // guarda contra divisão por zero na geometria
     const svg = el('svg', { viewBox: `0 0 ${size} ${size}`, class: 'chart-svg', style: `max-width:${size}px;margin:auto` });
     const cx = r, cy = r;
     let a0 = -Math.PI / 2;
@@ -50,7 +51,7 @@
     });
     // center label
     const cLabel = el('text', { x: cx, y: cy - 4, 'text-anchor': 'middle', fill: 'var(--ink)', 'font-size': 20, 'font-weight': 800 });
-    cLabel.textContent = opts.centerTop || U.brlShort(total);
+    cLabel.textContent = opts.centerTop || U.brlShort(realTotal);
     const cSub = el('text', { x: cx, y: cy + 15, 'text-anchor': 'middle', fill: 'var(--muted)', 'font-size': 11 });
     cSub.textContent = opts.centerSub || 'Total';
     if (inner > 0) { svg.appendChild(cLabel); svg.appendChild(cSub); }

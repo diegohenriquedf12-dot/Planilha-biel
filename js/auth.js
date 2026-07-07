@@ -48,7 +48,7 @@
     },
 
     demo() {
-      const s = { email: 'demo@neofinance.app', name: 'Visitante Demo' };
+      const s = { email: 'visitante@neofinance.app', name: 'Visitante' };
       this.setSession(s);
       return s;
     },

@@ -20,7 +20,8 @@ python3 -m http.server 8000
 ```
 
 Na tela de login você pode **criar uma conta**, **entrar** ou usar o botão
-**"Entrar no modo demonstração"**, que já carrega 6 meses de dados de exemplo.
+**"Entrar sem cadastro (visitante)"**. O app começa **totalmente zerado** — é só
+cadastrar seus próprios lançamentos, contas, cartões e metas.
 
 ## ✨ Funcionalidades
 

@@ -84,7 +84,7 @@
   function enterApp(session) {
     Store.load(session.email);
     if (session.name && Store.data.profile) {
-      if (!Store.data.profile.name || Store.data.profile.name === 'Gabriel') Store.data.profile.name = session.name;
+      if (!Store.data.profile.name) Store.data.profile.name = session.name;
     }
     // apply saved theme from data
     const th = Store.data.settings.theme || 'dark';
@@ -270,6 +270,130 @@
   }
 
   /* =========================================================
+     Guias passo a passo — a maneira certa de lançar cada coisa
+     ========================================================= */
+  const GUIDES = {
+    dashboard: {
+      icon: '🚀', title: 'Como começar', sub: 'Monte suas finanças em 4 passos',
+      steps: [
+        'Cadastre suas <b>receitas e despesas</b> na aba <b>Lançamentos</b> — é o coração do app.',
+        'Registre suas <b>contas fixas</b>, <b>cartões</b> e <b>assinaturas</b> nas áreas correspondentes.',
+        'Defina <b>metas</b>, um <b>orçamento</b> mensal e monte sua <b>reserva</b> de emergência.',
+        'Pronto! Este painel se atualiza sozinho e mostra tudo em tempo real.',
+      ],
+      tip: 'Lance os valores <b>reais</b> e nas <b>datas certas</b> — é o que garante gráficos e previsões corretos.',
+    },
+    transactions: {
+      icon: '💸', title: 'Como lançar receitas e despesas', sub: 'A maneira certa de registrar',
+      steps: [
+        'Clique em <b>＋ Novo lançamento</b>.',
+        'Escolha <b>Despesa</b> (saiu dinheiro) ou <b>Receita</b> (entrou dinheiro).',
+        'Selecione a <b>categoria</b> certa. Precisa de outra? Crie em <b>📁 Categorias</b>.',
+        'Preencha <b>descrição</b>, <b>valor</b> e a <b>data real</b> do gasto/ganho.',
+        'Informe a <b>forma de pagamento</b>. Compras no <b>crédito</b> devem ir na aba <b>Cartões</b>, não aqui.',
+        '(Opcional) Anexe o comprovante e salve.',
+      ],
+      tip: 'Regra de ouro: lance na <b>data em que o dinheiro entrou ou saiu de fato</b> da sua conta.',
+    },
+    accounts: {
+      icon: '🧾', title: 'Como cadastrar contas', sub: 'Contas fixas e variáveis',
+      steps: [
+        'Clique em <b>＋ Nova conta</b> e cadastre gastos recorrentes (aluguel, luz, internet…).',
+        'Marque como <b>Fixa</b> (valor sempre igual) ou <b>Variável</b> (muda a cada mês).',
+        'Informe o <b>valor</b> e o <b>dia do vencimento</b> — aparece no Calendário e nos alertas.',
+        'Quando <b>pagar</b> a conta, registre o pagamento em <b>Lançamentos</b> como despesa.',
+      ],
+      tip: 'Aqui é o <b>planejamento</b> das contas; o pagamento real de cada mês vai em <b>Lançamentos</b>.',
+    },
+    cards: {
+      icon: '💳', title: 'Como usar os cartões', sub: 'Faturas e parcelas do jeito certo',
+      steps: [
+        'Cadastre o cartão com <b>limite</b>, <b>dia de fechamento</b> e <b>vencimento</b>.',
+        'A cada compra no crédito, clique no <b>➕</b> do cartão e informe valor e nº de <b>parcelas</b>.',
+        'O app divide o valor pelas parcelas e monta a <b>fatura atual</b> automaticamente.',
+        '<b>Não</b> lance compras de crédito em "Lançamentos" — só aqui, para não contar duas vezes.',
+        'Ao <b>pagar a fatura</b>, registre em Lançamentos como uma despesa única.',
+      ],
+      tip: 'Compras no <b>débito ou Pix</b> vão direto em Lançamentos. Só o <b>crédito</b> entra aqui.',
+    },
+    subscriptions: {
+      icon: '📺', title: 'Como controlar assinaturas', sub: 'Serviços mensais recorrentes',
+      steps: [
+        'Clique em <b>＋ Nova assinatura</b> (Netflix, Spotify, academia…).',
+        'Informe o <b>valor</b> e o <b>dia da cobrança</b> mensal.',
+        'Use <b>⏸ Pausar</b> nas que você não usa — o app calcula quanto isso economiza por ano.',
+      ],
+      tip: 'Revise esta lista de vez em quando: assinaturas esquecidas são um dos maiores vazamentos de dinheiro.',
+    },
+    budget: {
+      icon: '🎯', title: 'Como montar seu orçamento', sub: 'Limite de gasto por categoria',
+      steps: [
+        'Defina um <b>limite mensal</b> para cada categoria de despesa no campo à direita.',
+        'Conforme você lança despesas, a <b>barra</b> mostra quanto já foi gasto.',
+        'Cores: <b>verde</b> = tranquilo, <b>amarelo</b> = atenção, <b>vermelho</b> = estourou.',
+      ],
+      tip: 'Comece definindo um limite para a categoria que <b>mais pesa</b> no seu bolso.',
+    },
+    goals: {
+      icon: '🏆', title: 'Como criar e bater metas', sub: 'Objetivos com progresso',
+      steps: [
+        'Clique em <b>＋ Nova meta</b> e informe <b>valor alvo</b> e <b>prazo</b> (ex: Viagem).',
+        'Sempre que guardar dinheiro para ela, clique em <b>＋ Depositar</b>.',
+        'A barra de progresso enche e você ganha uma <b>comemoração</b> ao concluir. 🎉',
+      ],
+      tip: 'Divida o valor pelo prazo para saber quanto guardar por mês e mantenha o ritmo.',
+    },
+    reserve: {
+      icon: '🛡️', title: 'Como montar sua reserva', sub: 'Segurança para imprevistos',
+      steps: [
+        'Em <b>⚙️ Configurar</b>, informe sua <b>despesa mensal</b> e a <b>meta</b> (ideal: 6× a despesa).',
+        'Sempre que guardar dinheiro, clique em <b>＋ Depositar</b>.',
+        'O medidor mostra quantos <b>meses de segurança</b> você já acumulou.',
+      ],
+      tip: 'Mantenha a reserva numa aplicação de <b>alta liquidez</b> (resgate imediato), separada do dia a dia.',
+    },
+  };
+
+  function helpBtn(route) {
+    if (!GUIDES[route]) return null;
+    return el('button', { class: 'btn btn-ghost btn-sm', text: '❔ Como usar', onclick: () => guideModal(route) });
+  }
+
+  function guideSteps(g) {
+    const box = el('div', { class: 'guide-steps' });
+    g.steps.forEach((s, i) => box.appendChild(el('div', { class: 'guide-step' }, [el('span', { class: 'gs-num', text: String(i + 1) }), el('div', { html: s })])));
+    return box;
+  }
+
+  function guideModal(route) {
+    const g = GUIDES[route]; if (!g) return;
+    const wrap = el('div');
+    wrap.appendChild(el('h2', { html: g.icon + ' ' + g.title }));
+    wrap.appendChild(el('p', { class: 'modal-sub', text: g.sub || 'Passo a passo' }));
+    wrap.appendChild(guideSteps(g));
+    if (g.tip) wrap.appendChild(el('div', { class: 'ai-tip', style: { marginTop: '14px' } }, [el('span', { class: 'ai-ic', text: '💡' }), el('div', { html: g.tip, style: { fontSize: '13px' } })]));
+    wrap.appendChild(el('button', { class: 'btn btn-primary btn-block', style: { marginTop: '14px' }, text: 'Entendi', onclick: closeModal }));
+    openModal(wrap);
+  }
+
+  // Card de guia dispensável, exibido no topo da seção até o usuário fechar.
+  function mountGuide(root, route) {
+    const g = GUIDES[route]; if (!g) return;
+    const s = Store.data.settings;
+    s.dismissedGuides = s.dismissedGuides || {};
+    if (s.dismissedGuides[route]) return;
+    const card = el('div', { class: 'card guide-card' });
+    card.appendChild(el('div', { class: 'chart-head' }, [
+      el('h3', { html: g.icon + ' ' + g.title }),
+      el('button', { class: 'icon-btn', style: { width: '32px', height: '32px', fontSize: '13px' }, title: 'Dispensar guia', text: '✕',
+        onclick: () => { s.dismissedGuides[route] = true; Store.save(); go(App.route); } }),
+    ]));
+    card.appendChild(guideSteps(g));
+    if (g.tip) card.appendChild(el('div', { class: 'ai-tip', style: { marginTop: '11px' } }, [el('span', { class: 'ai-ic', text: '💡' }), el('div', { html: g.tip, style: { fontSize: '13px' } })]));
+    root.appendChild(card);
+  }
+
+  /* =========================================================
      Views
      ========================================================= */
   const VIEWS = {};
@@ -283,9 +407,11 @@
     const W = Store.data.settings.widgets;
 
     root.appendChild(pageHead('Olá, ' + Store.data.profile.name.split(' ')[0] + ' 👋', 'Resumo financeiro de ' + U.MONTHS_FULL[new Date().getMonth()] + ' de ' + new Date().getFullYear(), [
+      helpBtn('dashboard'),
       el('button', { class: 'btn btn-ghost btn-sm', text: '⚙️ Widgets', onclick: widgetModal }),
       el('button', { class: 'btn btn-primary btn-sm', text: '＋ Lançamento', onclick: () => txModal() }),
     ]));
+    if (!Store.data.transactions.length) mountGuide(root, 'dashboard');
 
     // stat cards
     const cards = el('div', { class: 'cards' });
@@ -445,9 +571,11 @@
   VIEWS.transactions = function (root) {
     root.innerHTML = '';
     root.appendChild(pageHead('Lançamentos', 'Receitas e despesas com categorias, anexos e filtros', [
+      helpBtn('transactions'),
       el('button', { class: 'btn btn-ghost btn-sm', text: '📁 Categorias', onclick: categoriesModal }),
       el('button', { class: 'btn btn-primary btn-sm', text: '＋ Novo lançamento', onclick: () => txModal() }),
     ]));
+    mountGuide(root, 'transactions');
 
     // toolbar
     const months = Store.monthlySeries(12).map((m) => m.ym).reverse();
@@ -645,8 +773,10 @@
   VIEWS.accounts = function (root) {
     root.innerHTML = '';
     root.appendChild(pageHead('Contas', 'Contas fixas e variáveis com vencimentos', [
+      helpBtn('accounts'),
       el('button', { class: 'btn btn-primary btn-sm', text: '＋ Nova conta', onclick: () => accountModal() }),
     ]));
+    mountGuide(root, 'accounts');
     const fixedTotal = U.sum(Store.data.accounts.filter((a) => a.active && a.kind === 'fixed'), (a) => a.amount);
     const varTotal = U.sum(Store.data.accounts.filter((a) => a.active && a.kind === 'variable'), (a) => a.amount);
     const cards = el('div', { class: 'cards' });
@@ -701,8 +831,10 @@
   VIEWS.cards = function (root) {
     root.innerHTML = '';
     root.appendChild(pageHead('Cartões de crédito', 'Limites, faturas atuais, próximas faturas e parcelas', [
+      helpBtn('cards'),
       el('button', { class: 'btn btn-primary btn-sm', text: '＋ Novo cartão', onclick: () => cardModal() }),
     ]));
+    mountGuide(root, 'cards');
     const totalLimit = U.sum(Store.data.cards, (c) => c.limit);
     const totalUsed = U.sum(Store.data.cards, (c) => Store.cardInvoiceTotal(c));
     const cards = el('div', { class: 'cards' });
@@ -808,8 +940,10 @@
   VIEWS.subscriptions = function (root) {
     root.innerHTML = '';
     root.appendChild(pageHead('Assinaturas', 'Controle seus serviços recorrentes', [
+      helpBtn('subscriptions'),
       el('button', { class: 'btn btn-primary btn-sm', text: '＋ Nova assinatura', onclick: () => subModal() }),
     ]));
+    mountGuide(root, 'subscriptions');
     const active = Store.data.subscriptions.filter((s) => s.active);
     const monthly = U.sum(active, (s) => s.amount);
     const cards = el('div', { class: 'cards' });
@@ -863,7 +997,8 @@
   /* ---------- Budget ---------- */
   VIEWS.budget = function (root) {
     root.innerHTML = '';
-    root.appendChild(pageHead('Orçamento mensal', 'Defina limites por categoria e acompanhe o consumo'));
+    root.appendChild(pageHead('Orçamento mensal', 'Defina limites por categoria e acompanhe o consumo', [helpBtn('budget')]));
+    mountGuide(root, 'budget');
     const ym = U.ymKey(new Date());
     const spend = Store.spendByCategory(ym);
     const totalBudget = U.sum(Object.values(Store.data.budgets));
@@ -901,8 +1036,10 @@
   VIEWS.goals = function (root) {
     root.innerHTML = '';
     root.appendChild(pageHead('Metas financeiras', 'Objetivos com barra de progresso e recompensas', [
+      helpBtn('goals'),
       el('button', { class: 'btn btn-primary btn-sm', text: '＋ Nova meta', onclick: () => goalModal() }),
     ]));
+    mountGuide(root, 'goals');
     const grid = el('div', { class: 'cards' });
     Store.data.goals.forEach((g) => {
       const pct = U.clamp((g.saved / g.target) * 100, 0, 100);
@@ -973,7 +1110,8 @@
   /* ---------- Reserve ---------- */
   VIEWS.reserve = function (root) {
     root.innerHTML = '';
-    root.appendChild(pageHead('Reserva de emergência', 'Sua segurança financeira para imprevistos'));
+    root.appendChild(pageHead('Reserva de emergência', 'Sua segurança financeira para imprevistos', [helpBtn('reserve')]));
+    mountGuide(root, 'reserve');
     const r = Store.data.reserve;
     const pct = r.target ? U.clamp((r.saved / r.target) * 100, 0, 100) : 0;
     const months = r.monthlyExpense ? (r.saved / r.monthlyExpense) : 0;
@@ -1292,7 +1430,7 @@
       el('button', { class: 'btn btn-primary btn-sm', text: '⬇️ Exportar backup (JSON)', onclick: () => { U.download('neofinance-backup-' + U.iso(new Date()) + '.json', Store.exportJSON(), 'application/json'); toast('Backup exportado'); } }),
       (() => { const lbl = el('label', { class: 'btn btn-ghost btn-sm', text: '⬆️ Importar backup' }); const inp = el('input', { type: 'file', accept: '.json', style: { display: 'none' } }); inp.onchange = (e) => { const file = e.target.files[0]; if (!file) return; const r = new FileReader(); r.onload = () => { try { Store.importJSON(r.result); toast('Backup restaurado'); go('dashboard'); } catch (err) { toast('Arquivo inválido', '', 'bad'); } }; r.readAsText(file); }; lbl.appendChild(inp); return lbl; })(),
       el('button', { class: 'btn btn-ghost btn-sm', text: '📊 Exportar Excel', onclick: exportExcel }),
-      el('button', { class: 'btn btn-danger', text: '🔄 Restaurar dados demo', onclick: () => confirmDelete('todos os dados e recarregar o exemplo', () => { Store.reset(); toast('Dados restaurados'); go('dashboard'); }) }),
+      el('button', { class: 'btn btn-danger', text: '🧹 Zerar todos os dados', onclick: () => confirmDelete('todos os dados (lançamentos, contas, cartões, metas, etc.) e começar do zero', () => { Store.reset(); toast('Dados zerados'); go('dashboard'); }) }),
     ]);
     data.appendChild(btns);
     data.appendChild(el('div', { style: { marginTop: '16px', paddingTop: '16px', borderTop: '1px solid var(--border)' } }, [
