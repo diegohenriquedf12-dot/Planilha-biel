@@ -84,7 +84,7 @@
   function enterApp(session) {
     Store.load(session.email);
     if (session.name && Store.data.profile) {
-      if (!Store.data.profile.name || Store.data.profile.name === 'Gabriel') Store.data.profile.name = session.name;
+      if (!Store.data.profile.name) Store.data.profile.name = session.name;
     }
     // apply saved theme from data
     const th = Store.data.settings.theme || 'dark';
@@ -1292,7 +1292,7 @@
       el('button', { class: 'btn btn-primary btn-sm', text: '⬇️ Exportar backup (JSON)', onclick: () => { U.download('neofinance-backup-' + U.iso(new Date()) + '.json', Store.exportJSON(), 'application/json'); toast('Backup exportado'); } }),
       (() => { const lbl = el('label', { class: 'btn btn-ghost btn-sm', text: '⬆️ Importar backup' }); const inp = el('input', { type: 'file', accept: '.json', style: { display: 'none' } }); inp.onchange = (e) => { const file = e.target.files[0]; if (!file) return; const r = new FileReader(); r.onload = () => { try { Store.importJSON(r.result); toast('Backup restaurado'); go('dashboard'); } catch (err) { toast('Arquivo inválido', '', 'bad'); } }; r.readAsText(file); }; lbl.appendChild(inp); return lbl; })(),
       el('button', { class: 'btn btn-ghost btn-sm', text: '📊 Exportar Excel', onclick: exportExcel }),
-      el('button', { class: 'btn btn-danger', text: '🔄 Restaurar dados demo', onclick: () => confirmDelete('todos os dados e recarregar o exemplo', () => { Store.reset(); toast('Dados restaurados'); go('dashboard'); }) }),
+      el('button', { class: 'btn btn-danger', text: '🧹 Zerar todos os dados', onclick: () => confirmDelete('todos os dados (lançamentos, contas, cartões, metas, etc.) e começar do zero', () => { Store.reset(); toast('Dados zerados'); go('dashboard'); }) }),
     ]);
     data.appendChild(btns);
     data.appendChild(el('div', { style: { marginTop: '16px', paddingTop: '16px', borderTop: '1px solid var(--border)' } }, [

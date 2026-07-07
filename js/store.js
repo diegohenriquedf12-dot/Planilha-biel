@@ -21,88 +21,25 @@
     { id: 'c_invest', name: 'Investimentos', icon: '📈', color: '#4f8bff', type: 'income' },
   ];
 
+  // Estado inicial ZERADO — sem dados de exemplo. Apenas as categorias
+  // padrão são mantidas (necessárias para cadastrar lançamentos).
   function seed() {
-    const now = new Date();
-    const tx = [];
-    const rnd = (min, max) => +(min + Math.random() * (max - min)).toFixed(2);
-
-    // build 6 months of history
-    for (let m = 5; m >= 0; m--) {
-      const base = new Date(now.getFullYear(), now.getMonth() - m, 1);
-      // salary
-      tx.push(mk('income', 'c_salary', 'Salário mensal', 7200, new Date(base.getFullYear(), base.getMonth(), 5), 'pix'));
-      if (Math.random() > .4) tx.push(mk('income', 'c_extra', 'Freelance', rnd(400, 1400), new Date(base.getFullYear(), base.getMonth(), 12 + (m % 6)), 'pix'));
-      tx.push(mk('income', 'c_invest', 'Rendimentos', rnd(120, 380), new Date(base.getFullYear(), base.getMonth(), 28), 'transfer'));
-      // recurring expenses
-      tx.push(mk('expense', 'c_home', 'Aluguel', 1650, new Date(base.getFullYear(), base.getMonth(), 8), 'boleto'));
-      tx.push(mk('expense', 'c_home', 'Energia + Água', rnd(180, 320), new Date(base.getFullYear(), base.getMonth(), 15), 'boleto'));
-      tx.push(mk('expense', 'c_sub', 'Streaming & Apps', 119.7, new Date(base.getFullYear(), base.getMonth(), 10), 'credit'));
-      // variable
-      const nFood = 6 + Math.floor(Math.random() * 5);
-      for (let i = 0; i < nFood; i++) tx.push(mk('expense', 'c_food', pick(['Mercado', 'Restaurante', 'iFood', 'Padaria']), rnd(28, 260), new Date(base.getFullYear(), base.getMonth(), 3 + Math.floor(Math.random() * 25)), pick(['credit', 'debit', 'pix'])));
-      for (let i = 0; i < 4; i++) tx.push(mk('expense', 'c_transp', pick(['Combustível', 'Uber', 'Estacionamento']), rnd(20, 180), new Date(base.getFullYear(), base.getMonth(), 2 + Math.floor(Math.random() * 26)), pick(['credit', 'debit'])));
-      for (let i = 0; i < 3; i++) tx.push(mk('expense', 'c_fun', pick(['Cinema', 'Bar', 'Show', 'Jogo']), rnd(35, 220), new Date(base.getFullYear(), base.getMonth(), 5 + Math.floor(Math.random() * 22)), 'credit'));
-      if (Math.random() > .5) tx.push(mk('expense', 'c_shop', pick(['Roupas', 'Eletrônico', 'Casa']), rnd(90, 650), new Date(base.getFullYear(), base.getMonth(), 14), 'credit'));
-      if (Math.random() > .6) tx.push(mk('expense', 'c_health', pick(['Farmácia', 'Consulta', 'Academia']), rnd(60, 300), new Date(base.getFullYear(), base.getMonth(), 18), 'debit'));
-    }
-
-    function mk(type, cat, desc, amount, date, method) {
-      return { id: U.uid(), type, categoryId: cat, description: desc, amount: +amount, date: U.iso(date), method, attachment: null, note: '' };
-    }
-    function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
-
-    const ym = U.ymKey(now);
     return {
-      version: 3,
-      profile: { name: 'Gabriel', currency: 'BRL', avatar: 'G' },
+      version: 4,
+      profile: { name: '', currency: 'BRL', avatar: '' },
       settings: {
         theme: 'dark',
         widgets: { balance: true, income: true, expense: true, investments: true, cashflow: true, categories: true, budget: true, goals: true, ai: true, upcoming: true },
-        alertThreshold: 1.25, // spend > 125% of avg triggers alert
+        alertThreshold: 1.25, // alerta quando o gasto passa da média por este fator
       },
-      categories: DEFAULT_CATEGORIES,
-      transactions: tx,
-      accounts: [
-        { id: U.uid(), name: 'Aluguel', amount: 1650, dueDay: 8, kind: 'fixed', categoryId: 'c_home', active: true },
-        { id: U.uid(), name: 'Internet + Telefone', amount: 129.9, dueDay: 12, kind: 'fixed', categoryId: 'c_home', active: true },
-        { id: U.uid(), name: 'Energia elétrica', amount: 240, dueDay: 15, kind: 'variable', categoryId: 'c_home', active: true },
-        { id: U.uid(), name: 'Plano de saúde', amount: 389, dueDay: 20, kind: 'fixed', categoryId: 'c_health', active: true },
-        { id: U.uid(), name: 'Academia', amount: 99.9, dueDay: 5, kind: 'fixed', categoryId: 'c_health', active: true },
-      ],
-      cards: [
-        { id: U.uid(), name: 'Nubank', brand: 'Mastercard', last4: '4821', color: 'linear-gradient(135deg,#7c3aed,#4f8bff)', limit: 8000, closeDay: 3, dueDay: 10,
-          invoices: [
-            { ym, items: [
-              { id: U.uid(), desc: 'Mercado', amount: 420.5, date: U.iso(new Date(now.getFullYear(), now.getMonth(), 2)), installments: 1, current: 1 },
-              { id: U.uid(), desc: 'Notebook (parcela)', amount: 333.33, date: U.iso(new Date(now.getFullYear(), now.getMonth(), 4)), installments: 12, current: 3 },
-              { id: U.uid(), desc: 'Restaurante', amount: 156.9, date: U.iso(new Date(now.getFullYear(), now.getMonth(), 6)), installments: 1, current: 1 },
-              { id: U.uid(), desc: 'Streaming', amount: 55.9, date: U.iso(new Date(now.getFullYear(), now.getMonth(), 10)), installments: 1, current: 1 },
-            ] },
-          ] },
-        { id: U.uid(), name: 'Itaú Black', brand: 'Visa', last4: '9032', color: 'linear-gradient(135deg,#0f172a,#334155)', limit: 15000, closeDay: 28, dueDay: 7,
-          invoices: [
-            { ym, items: [
-              { id: U.uid(), desc: 'Passagens aéreas', amount: 611.1, date: U.iso(new Date(now.getFullYear(), now.getMonth(), 1)), installments: 6, current: 2 },
-              { id: U.uid(), desc: 'Farmácia', amount: 89.4, date: U.iso(new Date(now.getFullYear(), now.getMonth(), 9)), installments: 1, current: 1 },
-            ] },
-          ] },
-      ],
-      goals: [
-        { id: U.uid(), name: 'Viagem Europa', icon: '✈️', target: 18000, saved: 7400, deadline: U.iso(new Date(now.getFullYear() + 1, 5, 1)), color: '#38bdf8', done: false },
-        { id: U.uid(), name: 'Trocar de carro', icon: '🚙', target: 45000, saved: 12800, deadline: U.iso(new Date(now.getFullYear() + 1, 11, 1)), color: '#23f0a6', done: false },
-        { id: U.uid(), name: 'Notebook novo', icon: '💻', target: 6000, saved: 6000, deadline: U.iso(new Date(now.getFullYear(), now.getMonth() + 1, 1)), color: '#9085e9', done: true },
-      ],
-      subscriptions: [
-        { id: U.uid(), name: 'Netflix', icon: '🎬', amount: 44.9, dueDay: 10, color: '#e50914', active: true },
-        { id: U.uid(), name: 'Spotify', icon: '🎵', amount: 21.9, dueDay: 15, color: '#1db954', active: true },
-        { id: U.uid(), name: 'iCloud', icon: '☁️', amount: 12.9, dueDay: 3, color: '#38bdf8', active: true },
-        { id: U.uid(), name: 'Amazon Prime', icon: '📦', amount: 19.9, dueDay: 22, color: '#ff9900', active: true },
-        { id: U.uid(), name: 'ChatGPT Plus', icon: '🤖', amount: 110, dueDay: 18, color: '#10a37f', active: true },
-      ],
-      reserve: { target: 24000, saved: 15600, monthlyExpense: 4000 },
-      budgets: { // per category monthly limit
-        c_food: 1400, c_transp: 700, c_fun: 500, c_shop: 600, c_health: 400, c_sub: 250,
-      },
+      categories: DEFAULT_CATEGORIES.map((c) => ({ ...c })),
+      transactions: [],
+      accounts: [],
+      cards: [],
+      goals: [],
+      subscriptions: [],
+      reserve: { target: 0, saved: 0, monthlyExpense: 0 },
+      budgets: {},
       achievements: {},
       notifications: [],
     };
