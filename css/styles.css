@@ -330,6 +330,14 @@ table.tbl tr:hover td{background:var(--surface-2)}
 .donut::before{content:"";position:absolute;inset:9px;border-radius:50%;background:var(--surface-solid)}
 .donut b{position:relative;z-index:1;font-size:15px;font-weight:800}
 
+/* Guides (passo a passo) */
+.guide-card{background:linear-gradient(135deg, rgba(35,240,166,.09), rgba(56,189,248,.07));border:1px solid var(--border-strong);margin-bottom:16px}
+.guide-steps{display:flex;flex-direction:column;gap:11px;margin-top:8px}
+.guide-step{display:flex;gap:12px;align-items:flex-start;font-size:13.5px;line-height:1.5;color:var(--ink-2)}
+.guide-step b{color:var(--ink)}
+.gs-num{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:12.5px;
+  background:var(--accent-grad);color:#04120c;box-shadow:0 4px 12px -4px rgba(35,240,166,.5)}
+
 /* AI insight */
 .ai-card{background:linear-gradient(135deg, rgba(35,240,166,.10), rgba(56,189,248,.08));border:1px solid var(--border-strong)}
 .ai-tip{display:flex;gap:12px;padding:12px;border-radius:14px;background:var(--surface-2);margin-bottom:10px}
